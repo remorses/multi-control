@@ -42,21 +42,23 @@ def main():
     #     seed=42,
     #     steps=30,
     # )
+    
+    code = 'https://ucarecdn.com/a308cfd2-9b1f-4b3c-95ed-3cb2647844eb/'
+    w = 1024
     gen(
         "sample.qr.png",
-        prompt="1mechanical girl,ultra realistic details, portrait, global illumination, shadows, octane render, 8k, ultra sharp,intricate, ornaments detailed, cold colors, metal, egypician detail, highly intricate details, realistic light, trending on cgsociety, glowing eyes, facing camera, neon details, machanical limbs,blood vessels connected to tubes,mechanical vertebra attaching to back,mechanical cervial attaching to neck,sitting,wires and cables connecting to head",
-        
-        brightness_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
-        tile_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
-        qr_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
-        depth_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
-        # hed_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
-        qr_conditioning_scale=0.1,
-        depth_conditioning_scale=0.4,
-        brightness_conditioning_scale=0.3,
-        tile_conditioning_scale=0.5,
-        width=728,
-        height=728,
+        prompt="houses in the snow, 4k",
+        brightness_image=code,
+        qr_image=code,
+        # tile_image=code,
+        # depth_image=code,
+        # hed_image=code,
+        qr_conditioning_scale=0.5,
+        depth_conditioning_scale=0.3,
+        brightness_conditioning_scale=0.5,
+        # tile_conditioning_scale=1,
+        width=w,
+        height=w,
         # guidance_scale=30,
         # eta=100,
         # seed=42,
@@ -64,6 +66,7 @@ def main():
         # scheduler="K_EULER",
         # guess_mode=True,
         steps=20,
+        num_samples=1,
     )
     return
     gen(
