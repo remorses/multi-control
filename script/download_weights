@@ -15,23 +15,23 @@ sys.path.append(".")
 
 from predict import CONTROLNET_CACHE, PROCESSORS_CACHE, AUX_IDS, SD15_WEIGHTS
 
-if os.path.exists(CONTROLNET_CACHE):
-    shutil.rmtree(CONTROLNET_CACHE)
-os.makedirs(CONTROLNET_CACHE)
+# if os.path.exists(CONTROLNET_CACHE):
+#     shutil.rmtree(CONTROLNET_CACHE)
+os.makedirs(CONTROLNET_CACHE, exist_ok=True)
 
-if os.path.exists(SD15_WEIGHTS):
-    shutil.rmtree(SD15_WEIGHTS)
-os.makedirs(SD15_WEIGHTS)
+# if os.path.exists(SD15_WEIGHTS):
+#     shutil.rmtree(SD15_WEIGHTS)
+os.makedirs(SD15_WEIGHTS, exist_ok=True)
 
-if os.path.exists(SD15_WEIGHTS):
-    shutil.rmtree(SD15_WEIGHTS)
-os.makedirs(SD15_WEIGHTS)
+# if os.path.exists(SD15_WEIGHTS):
+#     shutil.rmtree(SD15_WEIGHTS)
+os.makedirs(SD15_WEIGHTS, exist_ok=True)
 
 TMP_CACHE = "tmp_cache"
 
 if os.path.exists(TMP_CACHE):
     shutil.rmtree(TMP_CACHE)
-os.makedirs(TMP_CACHE)
+os.makedirs(TMP_CACHE, exist_ok=True)
 
 p = StableDiffusionPipeline.from_pretrained(
             "runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16, cache_dir=TMP_CACHE

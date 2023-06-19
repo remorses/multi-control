@@ -34,15 +34,19 @@ from midas_hack import MidasDetector
 
 
 AUX_IDS = {
-    "canny": "lllyasviel/sd-controlnet-canny",
+    "tile": "lllyasviel/control_v11f1e_sd15_tile",
     "depth": "fusing/stable-diffusion-v1-5-controlnet-depth",
-    "normal": "fusing/stable-diffusion-v1-5-controlnet-normal",
-    "hed": "fusing/stable-diffusion-v1-5-controlnet-hed",
-    "scribble": "fusing/stable-diffusion-v1-5-controlnet-scribble",
-    "hough": "fusing/stable-diffusion-v1-5-controlnet-mlsd",
-    "seg": "fusing/stable-diffusion-v1-5-controlnet-seg",
-    "pose": "fusing/stable-diffusion-v1-5-controlnet-openpose",
+    "brightness": "ioclab/control_v1p_sd15_brightness",
     "qr": "DionTimmer/controlnet_qrcode-control_v1p_sd15",
+    ### 
+    # "canny": "lllyasviel/sd-controlnet-canny",
+    # "normal": "fusing/stable-diffusion-v1-5-controlnet-normal",
+    # "hed": "fusing/stable-diffusion-v1-5-controlnet-hed",
+    # "scribble": "fusing/stable-diffusion-v1-5-controlnet-scribble",
+    # "hough": "fusing/stable-diffusion-v1-5-controlnet-mlsd",
+    # "seg": "fusing/stable-diffusion-v1-5-controlnet-seg",
+    # "pose": "fusing/stable-diffusion-v1-5-controlnet-openpose",
+    
 }
 
 SCHEDULERS = {
@@ -127,10 +131,11 @@ class Predictor(BasePredictor):
 
         print("Setup complete in %f" % (time.time() - st))
 
-    def canny_preprocess(self, img):
+    def canny_preprocess(self, img, low_threshold=0, high_threshold=1):
         return self.canny(img)
 
     def depth_preprocess(self, img):
+        return img
         return self.midas(img)
 
     def hough_preprocess(self, img):
@@ -184,7 +189,8 @@ class Predictor(BasePredictor):
             if name == "canny":
                 img = self.canny_preprocess(img, low_threshold, high_threshold)
             else:
-                img = getattr(self, "{}_preprocess".format(name))(img)
+                pass
+                # img = getattr(self, "{}_preprocess".format(name))(img)
 
             processed_control_images.append(img)
             conditioning_scales.append(conditioning_scale)
@@ -277,6 +283,20 @@ class Predictor(BasePredictor):
             description="Conditioning scale for qr controlnet",
             default=1,
         ),
+        tile_image: Path = Input(
+            description="Control image", default=None
+        ),
+        tile_conditioning_scale: float = Input(
+            description="Conditioning scale",
+            default=1,
+        ),
+        brightness_image: Path = Input(
+            description="Control image", default=None
+        ),
+        brightness_conditioning_scale: float = Input(
+            description="Conditioning scale",
+            default=1,
+        ),
         num_samples: int = Input(
             description="Number of samples (higher values may OOM)",
             ge=1,
@@ -334,20 +354,24 @@ class Predictor(BasePredictor):
         print("canny_image", canny_image)
         pipe, kwargs = self.build_pipe(
             {
-                "canny": [canny_image, canny_conditioning_scale],
+                "tile": [tile_image, tile_conditioning_scale],
                 "depth": [depth_image, depth_conditioning_scale],
-                "hed": [hed_image, hed_conditioning_scale],
-                "hough": [hough_image, hough_conditioning_scale],
-                "normal": [normal_image, normal_conditioning_scale],
-                "pose": [pose_image, pose_conditioning_scale],
-                "scribble": [scribble_image, scribble_conditioning_scale],
-                "seg": [seg_image, seg_conditioning_scale],
+                "brightness": [brightness_image, brightness_conditioning_scale],
                 "qr": [qr_image, qr_conditioning_scale],
+                # "canny": [canny_image, canny_conditioning_scale],
+                # "hed": [hed_image, hed_conditioning_scale],
+                # "hough": [hough_image, hough_conditioning_scale],
+                # "normal": [normal_image, normal_conditioning_scale],
+                # "pose": [pose_image, pose_conditioning_scale],
+                # "scribble": [scribble_image, scribble_conditioning_scale],
+                # "seg": [seg_image, seg_conditioning_scale],
+                
             },
             low_threshold=low_threshold,
             high_threshold=high_threshold,
             guess_mode=guess_mode,
         )
+
         if torch.cuda.is_available():
             pipe.enable_xformers_memory_efficient_attention()
         pipe.scheduler = SCHEDULERS[scheduler].from_config(pipe.scheduler.config)

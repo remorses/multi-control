@@ -5,12 +5,12 @@ import os
 
 
 def gen(output_fn, **kwargs):
-    if os.path.exists(output_fn):
-        print("Skipping", output_fn)
-        return
+    # if os.path.exists(output_fn):
+    #     print("Skipping", output_fn)
+    #     return
 
     print("Generating", output_fn)
-    url = "http://localhost:6000/predictions"
+    url = "http://localhost:5000/predictions"
     response = requests.post(url, json={"input": kwargs})
     data = response.json()
 
@@ -29,28 +29,37 @@ def gen(output_fn, **kwargs):
 
 
 def main():
-    gen(
-        "sample.none.png",
-        prompt="taylor swift in a mid century modern bedroom",
-        seed=42,
-        steps=30,
-    )
-    gen(
-        "sample.canny.png",
-        prompt="taylor swift in a mid century modern bedroom",
-        canny_image="https://hf.co/datasets/huggingface/documentation-images/resolve/main/diffusers/input_image_vermeer.png",
-        seed=42,
-        steps=30,
-    )
+    # gen(
+    #     "sample.none.png",
+    #     prompt="taylor swift in a mid century modern bedroom",
+    #     seed=42,
+    #     steps=30,
+    # )
+    # gen(
+    #     "sample.canny.png",
+    #     prompt="taylor swift in a mid century modern bedroom",
+    #     canny_image="https://hf.co/datasets/huggingface/documentation-images/resolve/main/diffusers/input_image_vermeer.png",
+    #     seed=42,
+    #     steps=30,
+    # )
     gen(
         "sample.qr.png",
         prompt="A film still of a kraken, reconciliation, 8mm film, traditional color grading, cinemascope, set in 1878",
-        qr_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
-        qr_conditioning_scale=1.5,
-        seed=42,
-        scheduler="K_EULER",
-        steps=50,
+        
+        brightness_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
+        tile_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
+        depth_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
+        # hed_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
+        # qr_conditioning_scale=1,
+        # depth_conditioning_scale=5,
+        width=728,
+        height=728,
+        # seed=42,
+        negative_prompt="low quality, curvy, circle, ugly, disfigured, low quality, blurry",
+        scheduler="DDIM",
+        steps=20,
     )
+    return
     gen(
         "sample.canny.guess.png",
         prompt="",
