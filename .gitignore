@@ -3,3 +3,5 @@ controlnet-cache
 processors-cache
 weights
 .*
+__pycache__
+tmp_cache

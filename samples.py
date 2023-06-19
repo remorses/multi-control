@@ -10,7 +10,7 @@ def gen(output_fn, **kwargs):
         return
 
     print("Generating", output_fn)
-    url = "http://localhost:5000/predictions"
+    url = "http://localhost:6000/predictions"
     response = requests.post(url, json={"input": kwargs})
     data = response.json()
 

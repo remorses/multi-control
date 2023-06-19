@@ -42,7 +42,7 @@ AUX_IDS = {
     "hough": "fusing/stable-diffusion-v1-5-controlnet-mlsd",
     "seg": "fusing/stable-diffusion-v1-5-controlnet-seg",
     "pose": "fusing/stable-diffusion-v1-5-controlnet-openpose",
-    'qr': 'DionTimmer/controlnet_qrcode-control_v1p_sd15',
+    "qr": "DionTimmer/controlnet_qrcode-control_v1p_sd15",
 }
 
 SCHEDULERS = {
@@ -85,9 +85,10 @@ class Predictor(BasePredictor):
         print("Loading pipeline...")
         st = time.time()
 
+        device = "cuda" if torch.cuda.is_available() else None
         self.pipe = StableDiffusionPipeline.from_pretrained(
             SD15_WEIGHTS, torch_dtype=torch.float16, local_files_only=True
-        ).to("cuda")
+        ).to(device)
 
         self.controlnets = {}
         for name in AUX_IDS.keys():
@@ -95,7 +96,7 @@ class Predictor(BasePredictor):
                 os.path.join(CONTROLNET_CACHE, name),
                 torch_dtype=torch.float16,
                 local_files_only=True,
-            ).to("cuda")
+            ).to(device)
 
         self.canny = CannyDetector()
 
@@ -140,21 +141,19 @@ class Predictor(BasePredictor):
 
     def scribble_preprocess(self, img):
         return self.hed(img, scribble=True)
-    
+
     def qr_preprocess(self, img):
         return img
-    
+
     def pose_preprocess(self, img):
         return self.pose(img)
-    
+
     def hed_preprocess(self, img):
         return self.hed(img)
 
     def seg_preprocess(self, image):
         image = image.convert("RGB")
-        pixel_values = self.seg_processor(
-            image, return_tensors="pt"
-        ).pixel_values
+        pixel_values = self.seg_processor(image, return_tensors="pt").pixel_values
         with torch.no_grad():
             outputs = self.seg_segmentor(pixel_values)
         seg = self.seg_processor.post_process_semantic_segmentation(
@@ -278,7 +277,6 @@ class Predictor(BasePredictor):
             description="Conditioning scale for qr controlnet",
             default=1,
         ),
-
         num_samples: int = Input(
             description="Number of samples (higher values may OOM)",
             ge=1,
@@ -333,6 +331,7 @@ class Predictor(BasePredictor):
         if len(MISSING_WEIGHTS) > 0:
             raise Exception("missing weights")
 
+        print("canny_image", canny_image)
         pipe, kwargs = self.build_pipe(
             {
                 "canny": [canny_image, canny_conditioning_scale],
@@ -349,7 +348,8 @@ class Predictor(BasePredictor):
             high_threshold=high_threshold,
             guess_mode=guess_mode,
         )
-        pipe.enable_xformers_memory_efficient_attention()
+        if torch.cuda.is_available():
+            pipe.enable_xformers_memory_efficient_attention()
         pipe.scheduler = SCHEDULERS[scheduler].from_config(pipe.scheduler.config)
 
         if seed is None:
@@ -370,7 +370,7 @@ class Predictor(BasePredictor):
         else:
             width = height = image_resolution
 
-        generator = torch.Generator("cuda").manual_seed(seed)
+        generator = torch.Generator().manual_seed(seed)
 
         outputs = pipe(
             prompt,
@@ -390,3 +390,14 @@ class Predictor(BasePredictor):
             sample.save(output_path)
             output_paths.append(Path(output_path))
         return output_paths
+
+
+# if __name__ == "__main__":
+#     p = Predictor()
+#     p.setup()
+#     p.predict(
+#         prompt="taylor swift in a mid century modern bedroom",
+#         canny_image="https://hf.co/datasets/huggingface/documentation-images/resolve/main/diffusers/input_image_vermeer.png",
+#         seed=42,
+#         steps=30,
+#     )
