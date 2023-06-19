@@ -44,19 +44,25 @@ def main():
     # )
     gen(
         "sample.qr.png",
-        prompt="A film still of a kraken, reconciliation, 8mm film, traditional color grading, cinemascope, set in 1878",
+        prompt="1mechanical girl,ultra realistic details, portrait, global illumination, shadows, octane render, 8k, ultra sharp,intricate, ornaments detailed, cold colors, metal, egypician detail, highly intricate details, realistic light, trending on cgsociety, glowing eyes, facing camera, neon details, machanical limbs,blood vessels connected to tubes,mechanical vertebra attaching to back,mechanical cervial attaching to neck,sitting,wires and cables connecting to head",
         
         brightness_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
         tile_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
+        qr_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
         depth_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
         # hed_image="https://github.com/anotherjesse/dream-templates/assets/27/c5df2f7c-7a0c-43ad-93d6-921af0759190",
-        # qr_conditioning_scale=1,
-        # depth_conditioning_scale=5,
+        qr_conditioning_scale=0.1,
+        depth_conditioning_scale=0.4,
+        brightness_conditioning_scale=0.3,
+        tile_conditioning_scale=0.5,
         width=728,
         height=728,
+        # guidance_scale=30,
+        # eta=100,
         # seed=42,
-        negative_prompt="low quality, curvy, circle, ugly, disfigured, low quality, blurry",
-        scheduler="DDIM",
+        negative_prompt="ugly, disfigured, low quality, blurry",
+        # scheduler="K_EULER",
+        # guess_mode=True,
         steps=20,
     )
     return

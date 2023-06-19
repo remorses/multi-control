@@ -100,6 +100,7 @@ class Predictor(BasePredictor):
                 os.path.join(CONTROLNET_CACHE, name),
                 torch_dtype=torch.float16,
                 local_files_only=True,
+
             ).to(device)
 
         self.canny = CannyDetector()
@@ -208,6 +209,7 @@ class Predictor(BasePredictor):
                 safety_checker=None,  # self.pipe.safety_checker,
                 feature_extractor=self.pipe.feature_extractor,
                 controlnet=control_nets,
+                
             )
             kwargs = {
                 "image": processed_control_images,
