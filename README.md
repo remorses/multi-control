@@ -1,3 +1,11 @@
+Tu run on lambda
+
+```
+curl -o /usr/local/bin/cog -L https://github.com/replicate/cog/releases/latest/download/cog_`uname -s`_`uname -m`
+chmod +x /usr/local/bin/cog
+```
+
+
 # Cog Implementation of ControlNet 
 
 This is an implementation of the [Diffusers ControlNet](https://huggingface.co/blog/controlnet) as a Cog model. [Cog](https://github.com/replicate/cog) packages machine learning models as standard containers.

@@ -65,7 +65,7 @@ def main():
         negative_prompt="ugly, disfigured, low quality, blurry",
         # scheduler="K_EULER",
         # guess_mode=True,
-        steps=20,
+        steps=30,
         num_samples=1,
     )
     return
